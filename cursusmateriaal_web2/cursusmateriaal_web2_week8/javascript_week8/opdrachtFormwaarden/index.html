@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <script src="scripts/index.js"></script>
+</head>
+<body>
+    <div class="formulier">
+        <div class="isRoker">
+            <p>Is roker
+                <input type="checkbox" name="" id="isRoker">
+            </p>
+        </div>
+        <div class="moedertaal">
+            <p>
+                Moedertaal    
+                <input type="radio" name="moedertaal" value="nl"><a>Nederlands</a>
+                <input type="radio" name="moedertaal" value="fr"><a>Frans</a>
+                <input type="radio" name="moedertaal" value="de"><a>Duits</a>
+            </p>
+        </div>
+        <div>
+            <p>
+                Favoriete buurland
+                <select id="favBuurland">
+                    <option value="Frankrijk">Frankrijk</option>
+                    <option value="Nederland">Nederland</option>
+                    <option value="Duitsland">Duitsland</option>
+                </select>
+            </p>
+        </div>
+        <div>
+            <p>
+                Bestelling
+                <select id="bestelling" multiple size="6">
+                    <option >Brood</option>
+                    <option >Melk</option>
+                    <option >Krant</option>
+                    <option >Aardappelen</option>
+                    <option >Biefstuk</option>
+                    <option >Chips</option>
+                </select>  
+            </p>
+        </div>
+        <button id="btnToonResultaat">Toon resultaat</button>
+    </div>
+</body>
+</html>

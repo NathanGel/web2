@@ -1,0 +1,15 @@
+.heading{
+    background-color: #122b40;
+    color: white;
+}
+.even{
+    background-color: #d3d3d3;
+}
+div{
+    border: 1px #122b40 solid;
+    display: inline-block;
+    margin: 10px;
+}
+p{
+    padding: 10px;
+}

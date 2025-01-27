@@ -1,0 +1,698 @@
+De DOM-tree:
+		- Document Object Model Tree // een boomstructuur van alle HTML elementen in het document
+			bv. html -> head -> meta | meta | title || body -> h1 | h2| a | ...
+				vertaling => Het html element heeft als children het "head" element en het "body" element
+										 het "head" element heeft als children de "meta", "meta" en "title" elementen
+										 het "body" element heeft als children de "h1", "h2" en "a" elementen
+										 
+										 Dit kan je in principe in een mooie boomstructuur voorstellen
+		- De elementen in de DOM-tree noemen we "nodes" //html is de "root node"
+		- De lijnen tussen de nodes duiden connecties aan. De lijn omhoog geeft de parent, andersom de children.
+			Als je nog verder naar boven kijkt zijn dat de ancestors, andersom zijn dat de descendants.
+			
+Elementen uit de DOM-tree opvragen:
+		- document:
+			- element selectors:
+				- .getElementById();
+					bv. document.getElementById("titel"); //indien er geen id "titel" bestaat is de return value null
+				- .getElementsByClassName();
+					bv. document.getElementsByClassName("titel"); // geeft een HTML collectie met alle elementen met klasse "titel", indien niets gevonden => lege lijst
+				- .getElementsByTagName();
+					bv. document.getElementsByTagName("ul"); //geeft alle elementen met de tag "ul" van unordered list.  //zelfde als ClassName maar dan met HTML-tags
+				- .getElementsByName()
+					bv. document.getElementsByName("firstName"); //geeft een lijst met alle elementen met een naam attribuut "firstName" denk aan contactformulieren
+			- query selectors:	
+				- .querySelector()
+					bv. document.querySelector("#playfield"); //retourneerd een verwijzing naar het EERSTE element dat door de selector wordt teruggevonden niet gevonden => null
+				- .querySelectorAll()
+					bv. document.querySelectorAll(".important>img") //retourneerd een lijst met ALLE elementen die door de selector teruggevonden worden
+			
+			- .querySelector(All) mogelijkheden:
+				- id selector met document.querySelector("#id");
+				- class selector met document.querySelector(".class");
+				- descendant combinator met document.querySelectorAll(".class element"); // let op de spatie tussen de naam van de klasse en de naam van het element
+				- child combinator met document.querySelectorAll(".class>element");
+				- attribute selector met document.querySelector(All)("element[type="type"]");
+					bv. document.querySelector("input[type="text"]");
+					bv. document.querySelector("button[type="submit"]");
+					- mogelijkheden attribute selector:
+						- a[href^="http"] staat voor <a> elementen met een "href" attribuut dat BEGINT met "http"
+						- a[href*="example"] staat voor <a> elementen met een "href" attribuut dat "example" BEVAT
+						- a[href$=".com"]staat voor <a> elementen met een "href" attribuut  dat EINDIGT met ".com"
+						- document.querySelector("#frmContact  [name='firstName']") // een verwijzing naar het eerste element met 
+																																							attribuut name="firstName" in het element met id "#frmContact"
+				- pseudo-class selector met document.querySelector("element:pseudo-class");
+					bv. document.querySelector("li:first-child");
+					bv. document.querySelector("input[type="checkbox"]:checked");
+				
+			!Het voorbeeld ".important>img" duid op alle "img" elementen die een direct kind zijn van een element met de ".important" klasse!
+			!Om alle descendants te verkrijgen moet je werken met het volgende: ".important img"!
+			
+			!LET OP TagName en ClassName gaat over "elementS" meervoud!!!
+			!LET OP voor TagName en ClassName zal je dus moeten aangeven met welke index bv. titels[0]!!!
+			
+			!!!BELANGRIJK!!!
+			
+			- Je kan niet enkel vanuit het "document" zoeken maar ook vanuit reeds opgevraagde elementen.
+				let frmContact=document.getElementById("frmContact"); 
+				... 
+				let errorMessages=frmContact.getElementsByClassName("errorMessage"); 
+				for (let i=0;i<errorMessages.length;i++) { 
+					errorMessages[i].textContent="";      // maak de span leeg zodat de foutmelding verdwijnt 
+				}
+
+Werken met de elementen uit de DOM-tree:
+		- .textContent:
+			- inhoud opvragen
+				bv.  <a id="link" href="http://www.vlaanderen.be">Vlaanderen</a>
+						let link = document.getElementById("link");
+						console.log(link.textContent); // Geeft "Vlaanderen" terug
+			- inhoud aanpassen
+				bv.  <p class="para">blabla1</p>
+					    <p class="para">blabla1</p>
+					    <p class="para">blabla1</p>
+						let paras = document.getElementsByClassName("para");
+						paras[1].textContent = "boemboem2" // verandert blabla2 in boemboem2 // LET OP! index aangeven aangezien het een HTML-collectie is
+		
+									!Het opvragen van de textContent geeft de inhoud van het element en al de descendants. 
+												We gebruiken dit doorgaans enkel bij elementen zonder descendants!
+		
+		- .innerHTML !OPPASSEN .innerHTML met hoofdletters!
+			bv.  <p id="txtDemo"> hier staat een beetje tekst</p>
+					let txtDemo = document.getElementByid("textDemo");
+					textDemo.innerHTML = 'Make <a href="http://www.vlaanderen.be">Flanders</a> great again.'
+					// Dit zal de tekst van de paragraaf veranderen alsook een hyperlink toevoegen aan de DOM-tree.
+			bv. <ul id="lstBoodschappen">
+						<li>brood</li>
+						<li>melk</li>
+					</ul>
+					let lstBoodschappen = document.getElementById("lstBoodschappen");
+					lstBoodschappen.innerHTML += "<li>kaas</li>";
+					// Dit zal een nieuw li element toevoegen achteraan de ul resultaat zou dus brood, melk, kaas zijn
+					// In de werkelijkheid worden hierbij brood en melk ook te vervangen door zichzelf
+		
+		- .insertAdjacentHTML(pos, html)
+			bv. let firstList = document.getElementsByTagName("ul")[0]; 
+					firstList.insertAdjacentHTML("beforeend", "<li>een nieuw item</li>");
+			- pos parameter:
+				- beforebegin
+				- afterbegin
+				- beforeend
+				- afterend
+				bv.  beforebegin 
+						<ul> 
+								afterbegin 
+								<li>...</li> 
+								<li>...</li> 
+								<li>...</li> 
+							   beforeend 
+						</ul> 
+						afterend
+					
+					!LET OP DE MIX VAN "" EN '' TEKENS BIJ HET INVOEGEN VAN LINKS! 
+		
+		- .value !ENKEL VOOR INPUT ELEMENTEN!
+			bv.  <input id="txtName" type="text" value="John Doe">
+					<button id="btnUpdate">Update Name</button>
+					<p id="txtOutput"></p>
+					let  value = document.getElementById("txtName");
+					value.value = "abc"; // het value veld is nu veranderd in "abc"
+					
+		- .style
+			bv.  let div = document.getElementsByClassName("div");
+					div[0].style.color = "red" // veranderd de kleur van de inhoud uit de div in rood
+					div[0].style.backgroundColor = "blue"		
+					div[0].style.padding = "100px"
+					div[0].style.marginLeft = "10px"
+					
+			!LET OP bij backgroundColor en marginLeft gebruiken we een andere notatie dan css properties!
+		
+		- .className
+			bv. <p id="txtOutput" class="abc ">blablabla</p> 
+					 let txtOutput = document.getElementById("txtOutput"); 
+					 console.log( txtOutput.className );   // toont "abc" 
+					 txtOutput.className = "invalid";    // 1 class instellen 
+					 txtOutput.className = "";     // alle classes verwijderen
+					 
+		- .classList
+			bv. txtOutput.classList.add("invalid"); 
+				   txtOutput.classList.remove("invalid"); 
+				   if ( txtOutput.classList.contains("invalid") ) { ... } 
+		
+		- .getAttribute()
+			bv. element.getAttribute("href"); //retourneerd de waarde van het attribuut "href" wat bv "https://vlaanderen.be" is
+		- .setAttribute()
+			bv. element.setAttribute("href", “http://www.example.com"); //zet het "href" attribuut op waarde "http://www.example.com"
+		- .hasAttribute()
+			bv. element.hasAttribute("href"); //geeft terug of het element een "href" attribuut heeft (true of false)
+		
+		!Het is ook toegelaten om custom attributen toe te voegen. Deze dienen te beginnen met "data-" en de waarde hiervan is altijd eens string!
+		
+		- Werken met Nodes:
+		
+			De DOM-tree kan veel verschillende soorten nodes bevatten, bijvoorbeeld 
+				▪ element nodes   (voor HTML-elementen zoals <h1>, <a>, <p>, etc.) 
+				▪ text nodes   (voor de teksten die in en tussen de elementen staan) 
+				▪ comment nodes  (voor HTML commentaren tussen <!-- en -->) 
+				▪ ...
+				
+			- n.parentNode
+				// geeft de parent node van het n element. n is is dit geval een variabele met een verwijzing naar een element uit de DOM-tree.
+					bv. <body><a id="a">hallo</a></body> || let n = document.querySelector("#a"); || console.log(n.parentNode) //geeft de body tag
+						//geeft null indien er geen is, bv. omdat n nog geen parent heeft (bv. als we de node nog 
+							maar net hebben aangemaakt, zie verderop) of omdat n een document node is
+			- n.childNodes
+				// geeft een lijst die alle children van n bevat dit is GEEN array maar je kan wel .length en n[idx] erop toepassen
+					bv. <div class="controls">
+								<!-- een hyperlink die als een button wordt gestyled, let ook op de href value -->
+								<a href="#" class="buttonLink">Spin</a>
+							</div>
+							
+							output via .childNodes:
+							
+							<div class="controls">
+								#text (witruimte vóór de comment)
+								#comment (de HTML-comment: <!-- ... -->)
+								#text (witruimte tussen de comment en de `<a>`-tag)
+								<a href="#" class="buttonLink">Spin</a> (de hyperlink)
+								#text (witruimte na de `<a>`-tag)
+							</div>
+
+							!Merk op dat er initieel in de eigenlijke HTML 2 regels zijn in de code maar de browser na het parsen van de code hier whitespaces in ziet!
+			- n.firstChild / n.lastChild
+				// geeft het eerste of laatste kind terug. Retourneerd null indien er geen zijn
+					bv. <ul class = "lijst">
+								<li>a</li>
+								<li>b</li>
+								<li>c</li>
+								<li>d</li>
+							</ul>
+							
+							let n =document.querySelector(".lijst");
+							console.log(n.firstChild.textContent) // zal a op de console plaatsen 
+							console.log(n.lastChild.textContent) // zal d op de console plaatsen
+			- n.nextSibling / n.previousSibling
+				// geeft de volgende of de vorige "sibling" (broer of zus) node terug retourneerd null indien er geen is
+					bv.  <ul class = "lijst">
+								<li>a</li>
+								<li>b</li>
+								<li>c</li>
+								<li>d</li>
+							</ul>
+							
+							let n =document.querySelector(".lijst").firstChild;
+							console.log(n.nextSibling.textContent); // zal b op de console plaatsen
+							console.log(n.previousSibling.textContent); // zall null op de console plaatsen aangezien n reeds de eerste "sibling" node is
+							
+			!!LET OP bovenstaande methods geven ALLE soorten nodes. Meestal zijn we enkel geinteresseerd in de nodes die HTML bevatten terwijl whitespaces !!
+			!!en dergelijke hier ook een node inpakken!!
+			
+			- n.children
+			- n.firstElementChild / n.lastElementChild
+			- n.nextElementSibling / n.previousElementSibling
+			
+			!!Let op n.firstElementChild en n.lastElementChild, deze komen vaak van pas bij het gebruik van !!
+			!!insertAdjacentHTML() op posities "afterbegin" en "beforeend", als verwijzing naar het nieuwe element!!
+			
+			!Werken op dezelfde manier als de voorafgaande methods, maar retourneren enkel nodes met HTML inhoud!
+			
+			- n.nodeName
+				// zal altijd een string in hoofdletters teruggeven van het type node. Zoals bv. "A" voor een <a> of "IMG" voor een <img>. Retourneerd #text indien het een text node is
+			- n.nodeType
+				// retourneerd een getal naargelang welk soort node n is
+					- Mogelijkheden: 
+						- 1 => Node.ELEMENT_NODE (een element node als <p> of <div>)
+						- 2 => Node.ATTRIBUTE_NODE (een attribuut van een element node)
+						- 3 => Node.TEXT_NODE (de tekst in een element of attribuut node)
+						- 4 => Node.CDATA_SECTION_NODE (een CDATAsection zoals <!CDATA[[...]]>)
+						- 7 => Node.PROCESSING_INSTRUCTION_NODE (een processingInstruction van een XML document)
+						- 8 => Node.COMMENT_NODE (een commentaar node zoals <!--...-->)
+						- 9 => Node.DOCUMENT_NODE (een document node)
+						- 10 => Node.DOCUMENT_TYPE_NODE (een DocumentType node zoals <!doctype html>)
+						- 11 => Node.FRAGMENT_NODE (een documentFragment node)
+			- n.nodeValue
+				// geeft de texts van de node als string, indien n een text node is. Null indien het een element node is
+				
+			!!EEN VOORBEELD IVM NODES!!
+			
+			 <p> 
+				  hallo 
+				  <span>dit is een</span> 
+				  tekst 
+			 </p> 
+			 
+			 let paragraaf = document.getElementsByTagName("p")[0];
+			 paragraaf.childNodes; // zal 3 nodes bevatten
+			 
+			 textNode met inhoud (whitespace en hallo)
+			 elementNode met inhoud span
+			 textNode met inhoud (whitespace en tekst)
+			 
+			 // let op dat het span element ook tekst heeft, maar dat je dit hier niet ziet.
+			 
+			 - document.createElement(s)
+				bv. let elementNode = document.createElement("a");
+					// retourneerd een nieuwe element node die nog NIET in de DOM-tree zit! De s parameter is een string die aangeeft over wat voor element het gaat ("img" of "a")
+			- document.createTextNode(t)
+				bv. let textNode = document.createTextNode("Hello World!");
+					//retourneerd een nieuwe text node met de "t" parameter die een string voorstelt met de tekst voor de node. Doorgaans is .textContent echter veel handiger
+		   
+		   !Eenmaal aangemaakt kunnen we hier de gebruikelijke zaken mee uitvoeren zoals css-classes instellen of attributen een waarde geven of eventListeners koppelen!
+			
+			- .appendChild()
+				// werking: parentElement.appendChild(node);
+			- .removeChild()
+				// werking: parentElement.removeChild(node);
+
+			!VOORBEELD!
+				In de HTML code 
+				
+					 <div class="gallery"> 
+						  <img src="images/a.png"> 
+						  <img src="images/b.png"> 
+						  <img src="images/c.png"> 
+						  <img src="images/d.png"> 
+					 </div> 
+					 
+				In de Javascript code 
+				
+					let gallery = document.querySelector(".gallery");  
+					... 
+					let image = document.createElement("img"); 
+					image.setAttribute("src", "images/e.png"); 
+					gallery.appendChild(image);    // image toevoegen na laatste kind 
+					... 
+					let someImage=gallery.children[3];   // <img> met src="images/d.png" 
+					gallery.removeChild(someImage);   // d.png wordt verwijderd uit de gallery 
+
+					!ZOLANG INSERTADJACENTHTML DOET WAT JE NODIG HEBT GEBRUIK DIT DAN NIET!
+			
+Variabelen:
+		- let
+			bv. let getal = 4l; 		//De "let" variabele werkt voor alles. Dit wil zeggen integers, strings, booleans, chars, ... 
+		- const
+			bv. const getal = 4;
+		- Arrays:
+			- let woorden =  ["een", "twee", "drie"]; 
+			- let gemixt = [true, "hallo", 4];  //verschillende soorten elementen!
+			
+			!Arrays hebben geen vooraf bepaalde grootte!
+		
+		-  typeof
+			bv. let leeftijd = 18;
+					console.log(typeof  leeftijd); // geeft number
+		
+		- string interpolatie:
+			- `${getal} ${woord}`;
+				bv. let aantal = 10;
+						console.log(`"U kocht ${aantal} producten`);
+		
+		!LET OP DIT ZIJN BACKTICKS EN GEEN GEWONE SINGLE QUOTES!
+		
+Functions:
+		- Arrow functions
+			bv. const PrintHelloWorld = ()  => {
+						console.log("Hello world!");
+					}
+
+Werken met getallen:
+		- variabelen enkel met let of const ongeacht het datatype
+			bv. let getal = 10;
+					let getal = "10";
+		
+		- Number.parseInt(te ParsenWaarde, radix);
+			bv. let getal = "12";
+					getal = Number.parseInt(getal, 10);  // de 10 hier duidt de radix aan. Dit specifieerd het talstelsel waarin gewerkt wordt(decimaal, binair, octaal, ...);
+		- Number.parseFloat(); //zelfde als parseInt maar houdt rekening met kommagetallen.
+		
+		!LET OP parseFloat  werkt uitsluitend met een '.' als scheidingsteken. 3.45 NIET 3,45!
+		!het <input> veld met type="number" geeft ALTIJD 3.45 terug dus is perfect om te gebruiken!
+		bv. <input type="number">
+		
+		!BEIDE PARSE METHODS NEGEREN EXTRRA KARAKTERS!
+		bv. Number.parseInt("123eur"); // geeft 123
+		!als parsen niet lukt zit er een NaN waarde in de variabele (Not a Number)!
+		
+		- Number.isNaN()
+			bv. let getal = 12;
+					if(Number.isNaN(getal)){...}
+		
+		- .toString()
+			bv. let getal = 12;
+					let tekst = getal.toString();
+		 
+		 !Je kan getalwaarden ook achteraan een string plakken! // tekst += 5;
+		 
+		 - Number.toFixed(n); // de 'n' istaat hier voor het aantal cijfers achter de komma
+			bv. let getal = 12.34567;
+					console.log(getal.toFixed(2)); // de 2 duid op 2 cijfers achter de komma !AFGEROND!
+			
+		!Number.toFixed(n) gebruikt round half up rounding: alles gelijk of boven .5 naar boven en de rest naar onder!
+		
+		- Math.random(); //produceert een waarde tussen 0 en 1 [0,1[
+			bv. let getal = Math.random(); // geeft een kommagetal tussen 0 en 1 zoals bv. 0.8646444277717309 
+					let getal = Math.random() * 10; // geeft een kommagetal tussen 0 en 10 [0, 10[
+					let getal = 10 + Math.random() * 10; // geeft een kommagetal tussen 10 en 20 [10, 20[
+			
+		!LET OP MET AFRONDINGEN IVM GELIJK AANTAL WAARDEN! 
+		
+		- Afronden: 
+			- Number.toFixed(n)
+			- Math.floor()
+				bv. let getal = 12.78;
+						console.log(Math.floor(getal)); // geeft 12
+			- Math.ceil()
+				bv. let getal = 12.78;
+						console.log(Math.ceil(getal)); //geeft 13
+			- Math.round() 
+				bv. Math.round(7.34) geeft 7 
+				bv. Math.round(7.67) geeft 8 
+				bv. Math.round(7.5) geeft 8 
+				bv. Math.round(-7.5) geeft -7! 
+		
+		!LET OP MET MOGELIJKS NEGATIEVE GETALLEN BIJ AFRONDEN!
+		
+		- Voorbeeld van een slecht uitgevoerde afronding met Math.random()
+			 let aantalKeer = [0,0,0,0,0,0]; 
+			 
+			// genereer random getallen van 1 t.e.m. 6 en tel hoe vaak elk voorkomt 
+			for (let i=0 ; i<600000 ; i++) { 
+			   let getal = Math.round( Math.random() * 5 ) + 1; 
+			   aantalKeer[ getal-1 ]++;     // tel er voor dit getal eentje bij  
+			} 
+			 
+			// toon het resultaat van de telling 
+			for (let getal=1 ; getal<=6 ; getal++) { 
+			   console.log( `getal ${ getal } kwam ${ aantalKeer[getal-1] } keer voor` ); 
+			}
+			
+		!Een beter oplossing is om Math.floor( Math.random() * 6 ) + 1 te gebruiken en naar onder af te ronden!
+			
+Werken met strings:
+		- .length
+			bv. let string = "hallo";
+					console.log(string.length); //geeft 5
+		- .charAt(n);
+			bv. let string = "hallo"
+					console.log(string.charAt(2)); // geeft l
+		
+		!LET OP we tellen uiteraard vanaf 0!
+		
+		- .toUpperCase()
+			bv. let woord = "hallo"
+					console.log(woord.toUpperCase()); // geeft HALLO
+		- .toLowerCase()
+			bv. let woord = "HALLO"
+					console.log(woord.toUpperCase()); // geeft hallo
+		- .trim()
+			bv. string tekst = "   hallo   ";
+					console.log(tekst.trim())// "hallo"
+		
+		- .concat()
+			bv. let s1 = "Hello";
+					let s2 = "world!";
+					let s3 = s1.concat(s2); //s3 bevat nu "Hello world!" // kan ook met de + operator let s3 = s1 + s2;
+		
+		 - string interpolatie:
+			- `${getal} ${woord}`;
+				bv. let aantal = 10;
+						console.log(`"U kocht ${aantal} producten`);
+		
+		!LET OP DIT ZIJN BACKTICKS EN GEEN GEWONE SINGLE QUOTES!
+		
+		- string op meerder regels via template literals
+			bv. console.log(`Dit is regel 1 van de tekst
+					en regel 2 eronder`) // geeft Dit is regel 1 van de tekst
+																 en regel 2 eronder
+		
+		!LET OP werkt enkel met template literals die gebruik maken van `` BACKTICKS!
+		!Spaties, Tabs, Enters(NewLines) worden hierin uiteraard meegenomen!
+		
+		- .indexOf(zoektekst)
+			bv. let tekst = "Hallo allemaal ik ben ..."
+					if(tekst.indexOf("allemaal") != -1){
+						...
+					}
+		-.lastIndexOf(zoektekst)
+		
+		!BEIDEN KUNNEN OOK MET EEN EXTRA PARAMETER!
+			bv. tekst.indexOf(zoektekst, idx); //zoekt de zoektekst vanaf index idx
+			
+		-  .substring(idx1, idx2)
+		- .substr(idx, length)
+		- .slice(idx1, idx2)
+		
+		!SLICE IS DE BETERE KEUZE!
+		
+		voorbeeld met slice => let s1 = "Hello world";
+													   console.log(s1.slice(3,8)); // dit toont lo wo de 2de index is dus exclusief
+													   
+		- Speciale karakters:
+			-\n
+			-\'
+			-\"
+			-\\
+			-\u89ab voor unicode karakter 89ab
+		
+		- .localeCompare()
+			bv. let s1 = "abc"; let s2 = "cde";
+					let rtesultaat= s1.localeCompare(s2);
+		- string vergelijkingen met < == > ?
+			- niet correct, vergelijken de ascii code van de karakters
+		`
+
+Form-waarden opvragen:
+		- <select>
+			- .options
+				bv. let select = document.querySelector("#select").options; //geeft een lijst met alle options in het select element
+			- .selectedIndex 
+				bv. let index = document.querySelector("#select").selectedIndex; // retoruneerd de index of -1 indien niets geselecteerd
+		- <option>
+			- .selected //retourneerd true or false
+			- .value //de waarde van het value attribuut
+			- .text //de text die tussen begin en eindtags voorkomt
+		- <input>
+			- type="checkbox" || type="radio"
+				- .checked //retpurneerd true of false
+			- type="text" || type="number"
+				- .value retourneerd de waarde van het value attribuut
+
+		
+Files Linken:
+		- <script> html tag
+			bv. <script src="index.js"></script> 
+		
+		In principe kan je via de script HTML-tag zowel een JavaScript file linken als direct in het script element JavaScript code schrijven.
+			bv. <script>
+						let titels = document.getElementsByTagName("h1"); 
+						titels[0].style.color = "red";
+					</script>
+					
+		- <link rel="stylesheet" href="style.css">
+				
+JavaScript properties/functions:
+		- Arrays:
+			-  .length //retourneerd de lengte 
+				bv. let elementen = ["een", "twee", "drie"]; 
+						console.log ( elementen.length );  // toont 3 
+			- indexOf(element, idx);
+				bv. let elementen = ["een", "twee", "drie", "twee"];
+						console.log(elementen.indexOf("twee")); // toont 1
+						console.log(elementen.indexOf("vier")); // toont -1
+						console.log(elementen.indexOf("twee", 2)); // toont 3 de index die hir wordt meegegeven is de startpositie van waar te zoeken
+			- lastIndexOf(element, idx)
+				bv. let elementen = ["een", "twee", "drie", "twee"];
+						console.log(elementen.lastIndexOf("twee")); // toont 3
+						console.log(elementen.lastIndexOf("vier")); // toont -1
+						console.log(elementen.lastIndexOf("twee", 2)); // toont 1
+			- push(element)
+				bv. let elementen = ["een", "twee"];
+						console.log(elementen.push("drie")); // voegt het element toe aan het einde van de Array en geeft de nieuwe lengte terug
+						console.log(elementen); // toont ["een", "twee", "drie"]
+			- pop()
+				bv. let elementen = ["een", "twee", "drie"];
+						console.log(elementen.pop()); // verwijdert het laatste element en geeft dit element terug
+						console.log(elementen); // toont ["een", "twee"]
+			- unshift(element)
+				bv. let elementen = ["twee", "drie"];
+						console.log(elementen.unshift("een")); // voegt een element toe aan het begin van de Array en geeft de nieuwe lengte terug 
+						console.log(elementen); // toont ["een", "twee", "drie"]
+			- shift()
+				bv. let elementen = ["een", "twee", "drie"];
+						console.log(elementen.shift()); // verwijdert het eerste element en geeft dit element terug
+						console.log(elementen); // toont ["twee", "drie"]
+			- slice(idx1, idx2)
+				bv. let elementen = ["een", "twee", "drie", "vier"];
+						console.log(elementen.slice(1, 3)); // geeft een nieuwe Array terug met de elementen vanop idx1 tot idx2 (exclusief)
+						console.log(elementen.slice(2)); // toont ["drie", "vier"]
+			- splice()
+				bv. let elementen = ["een", "twee", "drie"];
+						console.log(elementen.splice(1, 1, "vier")); // toont ["twee"]
+						console.log(elementen); // toont ["een", "vier", "drie"]
+						
+				!Let op een foute index als -1 of 3 geeft in JavaScript geen fouten omdat Arrays geen vaste lengte hebben!
+			
+			- .sort()
+				bv. const compare = (a,b) => { 
+						  return a-b; 
+						 } 
+						 let array=[34, 67, 12, 5, 23]; 
+						 array.sort(compare);  
+			
+Loops:
+		- for-loop
+			bv. for(let i = 0; i<10;i++){
+						console.log(i);
+					}
+		- while-loop
+			bv. while(true){
+						console.log("Oneindige lus")
+					}
+		- doWhile-loop
+			bv. let count = 0;
+					do {
+						console.log(count);
+						count++;
+					} while (count < 5);
+		- forOf-loop
+			bv. let array = ["een", "twee", "drie"];
+					for (let element of array) {
+						console.log(element);
+					}
+					
+Input en output:
+		- console.log()
+			bv. console.log("Dit is een mededeling op de console")
+		- window popups:
+			- .alert()
+				bv. window.alert("Dit is een mededeling"); // Toont de mededeling als een popup met een "ok" knop
+			- .confirm()
+				bv. window.confirm("Weet u het zeker?"); // Toont een vraag met een "ok" of "cancel" knop. Retourneerd true als "ok" gekozen werd, anders false
+			- .prompt()
+				bv. window.prompt("Wat is uw naam", "onbekend") // Toont een invulveld met een "ok" en "cancel". De return waarde is de ingevulde waarde of
+																														 // null indien "cancel". "onbekend" is hier de reeds ingevulde tekst. Een lege string is gewoon "".
+				
+			!De console en window popus zijn geschikt voor ontwikkelaars, niet voor eindgebruikers.!
+			
+Event-based programming:
+		- elementNode.addEventListener("anEvent", ourFunction);
+			- elementNode => verwijzing naar een element uit de DOM-tree dat we bemachtigen met bv .getElementById
+			- anEvent => een string waarde met de naam van een event waar we in geinteresseerd zijn (vastgesteld in de API)
+			- ourFunction => de naam van de door ons geschreven functie die wordt aangeroepen wanneer anEvent zich voordoet.
+			bv. <div id="abc">...</div>
+					let elementNode = document.getElementNyId("abc");
+					elementNode.addEventListener("click", printHello)
+			
+		- event:
+			- .target
+				bv.let btn = document.querySelector(".button")
+					   btn.addEventListener("click", update);
+					   ...
+					   const update = (event) => {
+							let btn = event.target;
+							btn.setAttribute("id", "button");
+					   }
+					   // geeft de target van de eventListener die afgegaan is
+					   
+			- .currentTarget
+				bv. let btn = document.querySelector(".button");
+						btn.addEventListener("click", update);
+						...
+						const update = (event) = {
+							let btn = event.currentTarget;
+							btn.getAttribute("class");
+						}
+						// geeft de current target van de eventListener die afgegaan is.
+						
+				!.target en .currentTarget zijn meestal gelijk qua output, maar wanneer je meerde eventListeners nestelt in elkaar zijnde descendants alsook parents geeft dit verschillen!
+			
+			- .stopPropagation()
+				bv. <div id="parentDiv" style="border: 1px solid black; padding: 20px;">
+							Parent Div
+							<button id="childButton">Click Me</button>
+						</div>
+
+						<script>
+							const setup = () => {
+								let parentDiv = document.querySelector("#parentDiv");
+								let childButton = document.querySelector("#childButton");
+
+								parentDiv.addEventListener("click", () => {
+									console.log("Parent Div Clicked!");
+								});
+
+								childButton.addEventListener("click", (event) => {
+									event.stopPropagation(); // Prevents the event from bubbling to the parent
+									console.log("Button Clicked!");
+								});
+							};
+
+							window.addEventListener("load", setup);
+						</script>
+			- .preventDefault()
+				bv. <form id="myForm">
+							<input type="text" placeholder="Enter something" />
+							<button type="submit">Submit</button>
+						</form>
+
+						<script>
+							const setup = () => {
+								let form = document.querySelector("#myForm");
+								form.addEventListener("submit", (event) => {
+									event.preventDefault(); // Prevents the form from submitting
+									console.log("Form submission prevented!");
+								});
+							};
+
+							window.addEventListener("load", setup);
+						</script>
+				
+					!MERK OP GEEN HAAKJES ACHTER DE CALLBACK FUNCTIE DOE JE DIT WEL ZAL DE FUNCTIE NOOIT WORDEN OPGEROEPEN MAAR GEEN FOUTMELDING!
+					!LET OP DAT WANNEER EEN PARENT NODE EEN EVENTLISTENER HEEFT DAT WANNEER DIT EVENT ZICH VOORDOET BIJ DE DESCENDANTS DIT OOK AFGAAT!
+					
+Objecten:
+		- Date-object:
+			- Stelt een tijdstip voor (datum + tijd)
+				bv. let now = new Date(); // het object now bevat nu het tijdstip waarop het object is aangemaakt
+			- Aanmaken vaan een Date object:
+				- let date = new Date(); // geeft het moment waarop het gecreeerd is
+				- let date = new Date('2012-12-31'); //een object met 31 december 2012
+				- let date = new Date('2011-12-25T23:59:59') //een object met 25 december 2011 met tijdstip 23:59:59 (ingegeven formaat ISO-8601)
+			- Mogelijkheden:
+				- .getHours()
+					bv. let now = new Date();
+							let uren = now.getHours(); // output is het uur dat momenteel in het now object zit opgeslagen
+				- .getMinutes()
+					bv. let now = new Date();
+							let minuten = now.getMinutes(); // output is het aantal minuten dat momenteel in het now object zit opgelsagen
+				- .getDate()
+					bv. let now = new Date();
+							console.log(now.getDate()); //output is de dag die momenteel in het object zit opgelsagen
+				- .getMonth()
+					bv. let now = new Date();
+							console.log("now.getMonth()"); // output is de maand die momenteel in het now object zit opgeslagen
+							!LET OP de maand zal altijd een index van 1 lager zijn. Dit komt omdat 12 maanden een constante is en we dus van 0 tellen!
+				- .toISOString()
+					bv. let now = new Date();
+							console.log(now.toISOString());
+			- Zelf objecten aanmaken:
+				- let objectNaam = {};
+					bv. let student = {};
+			- Properties toevoegen:
+				- objectNaam.property = "waarde";
+					bv. student.voornaam = "Jan";
+					// om deze zaken op de zonsole te zetten gebruik je console.log(student.voornaam);
+			- Property verwijderen:
+				- delete objectNaam.property;
+					bv. delete student.voornaam;
+			- Objecten opslaan in een array:
+				let student1 = {};
+				let student2 = {};
+				let studenten = [student1, student2];
+			- Object literal notatie:
+				bv. let student = { 
+							  voornaam : "Jan", 
+							  familienaam : "Janssens", 
+							  geboortedatum : new Date("1993-12-31") 
+						};
+				!!LET OP DE ":" de komma's en de ';' op het einde!!

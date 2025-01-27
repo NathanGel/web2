@@ -1,0 +1,5 @@
+Deze zip file bevat 4 oplossingen voor opdracht 03, je bekijkt deze best in volgorde van de nummering.
+
+In elke oplossing staat telkens bovenaan de index.js file, wat de kenmerken van de oplossing zijn. Daaraan kun je snel zien hoe deze verschilt van een vorige oplossing.
+
+Oplossingen 01 en 04 zijn 'de betere' oplossingen.

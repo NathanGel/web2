@@ -1,0 +1,59 @@
+/* Reset some default browser styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    max-width: 800px; /* Optional: Limit table width */
+    margin: 2rem auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for aesthetics */
+}
+
+thead th {
+    background-color: #0078D7; /* Add a nice header background color */
+    color: white; /* White text for contrast */
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 2px solid #005A9E; /* Slightly darker bottom border */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f3f3f3; /* Light gray for even rows */
+}
+
+tbody tr:hover {
+    background-color: #e1f0ff; /* Highlight row on hover */
+}
+
+td, th {
+    padding: 0.75rem;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+tfoot td {
+    font-weight: bold;
+    background-color: #f7f7f7;
+    border-top: 2px solid #ccc;
+}
+
+input[type="number"] {
+    width: 70px;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: right;
+}
+
+.eindtotaal {
+    text-align: right;
+}

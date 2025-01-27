@@ -1,0 +1,53 @@
+.controls {
+    text-align:center;
+}
+
+.slots {
+    text-align:center;
+}
+
+.slots img {
+    height: 100px;
+    padding: 10px;
+}
+
+.message.show {
+    display:block; /* enkel berichten die de .show class hebben worden getoond, de andere worden verborgen */
+}
+
+.message {
+    text-align:center;
+    font-family:Arial;
+    font-size:28px;
+    font-weight:bold;
+    margin:0;
+
+    display:none; /* verberg alles berichten via CSS, we zullen ze later via Javascript tonen/verbergen via de .show class, zie hierboven */
+}
+
+/* button opmaak gegenereerd met https://www.bestcssbuttongenerator.com/ */
+.buttonLink {
+    box-shadow: 0px 0px 0px 0px #3dc21b;
+    background-color:#44c767;
+    border-radius:28px;
+    border:1px solid #18ab29;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:28px;
+    font-weight:bold;
+    font-style:italic;
+    padding:16px 31px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #2f6627;
+}
+.buttonLink:hover {
+    background-color:#5cbf2a;
+}
+.buttonLink:active {
+    position:relative;
+    top:1px;
+}
+/* einde button opmaak */
+

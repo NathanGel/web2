@@ -1,0 +1,23 @@
+let a1 = {};
+a1.straat = "Koekoekstraat 70";
+a1.postcode = "9090";
+a1.gemeente = "Melle";
+
+let s1 = {};
+s1.voornaam = "Mieke";
+s1.famillienaam = "Mickelson";
+s1.adres = a1;
+
+let a2 = {}
+a1.straat = "Kerkstraat 70";
+a1.postcode = "8000";
+a1.gemeente = "Brugge";
+
+let s2 = {};
+s1.voornaam = "jan";
+s1.famillienaam = "Janssens";
+s1.adres = a2;
+
+let studenten = [];
+studenten.push(s1);
+studenten.push(s2);
